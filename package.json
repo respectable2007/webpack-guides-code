@@ -13,6 +13,7 @@
   "author": "ZhangHui",
   "license": "ISC",
   "devDependencies": {
+    "babel-loader": "^7.1.2",
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.28.5",
     "csv-loader": "^2.1.1",

@@ -1,4 +1,6 @@
+/*定义输出文件路径*/
 const path = require('path');
+
 /*输出文件替换*/
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 //清空打包文件-dist
@@ -12,6 +14,8 @@ module.exports = {
 	/*多入口*/
 	entry:{
 		app: './src/index.js',
+		/*代码分离-动态导入不需要多入口*/
+		// another: './src/another-module.js'
 		// print: './src/print.js'
 
 	},
@@ -31,12 +35,20 @@ module.exports = {
 			title: 'output management'
 		}),
 		/*模块热替换*/
-		new webpack.HotModuleReplacementPlugin()
+		new webpack.HotModuleReplacementPlugin(),
+		/*防止重复，将共同的模块剥离到一个js文件内，单独的js内不包括共同模块*/
+		/*代码分离-动态导入不需要引用以下插件*/
+		// new webpack.optimize.CommonsChunkPlugin({
+		// 	name: 'common'
+		// })
 	],
 	/*输出文件目录等*/
 	output: {
-		// filename: 'bundle.js',
+		/*单入口输出*/
+		 // filename: 'bundle.js',
 		filename: '[name].bundle.js',
+		/*代码分离-动态导入,编译后，动态导入的模块会单独存入一个js文件*/
+		chunkFilename: '[name].bundle.js',
 		path:path.resolve(__dirname, 'dist')
 	},
 	/*css、图片、字体、csv、tsv、xml等资源加载*/
