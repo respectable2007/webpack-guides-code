@@ -62,16 +62,29 @@ module.exports = {
 		 // new webpack.optimize.CommonsChunkPlugin({
 		 // 	name: 'runtime'
 		 // })
+		/*shimming-provideplugin*/
+		// new webpack.ProvidePlugin({
+		// 	$: 'jquery',
+		// 	jQuery: 'jQuery',
+		// 	/*从tslib包中导入函数__assign*/
+		// 	__assign: ['tslib', '__assign']
+		// })
 	],
 	/*library-若不配置externals的话，会将其他模块一起打包进library中*/
-	externals: {
-		"lodash":{
-			commonjs: 'lodash',
-			commonjs2: 'lodash',
-			amd: 'lodash',
-			root: "_"
+	// externals: {
+	// 	"lodash":{
+	// 		commonjs: 'lodash',
+	// 		commonjs2: 'lodash',
+	// 		amd: 'lodash',
+	// 		root: "_"
+	// 	}
+	// },
+	/*shimming-未压缩的commonJS／AMD文件优先于dist打包版本*/
+	resolve： {
+		alias: {
+			jquery: "jquery/src/jquery"
 		}
-	},
+	}
 	/*输出文件目录等*/
 	output: {
 		/*单入口输出*/
@@ -83,9 +96,9 @@ module.exports = {
 		/*缓存,若文件文件未更改，则文件名中的hash值不变，若变化，则hash值变更*/
 		 // filename: '[name].[hash].js',
 		/*library*/
-		filename: 'webpack-numbers.js',
-		library:'webpackNumbers',
-		libraryTarget:'umd',
+		// filename: 'webpack-numbers.js',
+		// library:'webpackNumbers',
+		// libraryTarget:'umd',
 		path: path.resolve(__dirname, 'dist')
 	},
 	/*css、图片、字体、csv、tsv、xml等资源加载*/
@@ -119,6 +132,20 @@ module.exports = {
 			use:[
 			  'xml-loader'
 			]
-		}]
+		},
+		/*shimming-imports-loader／exports-loader*/
+		{
+			test: require.resolve("some-module"),
+			/*imports-loader替换重写*/
+			// use: 'imports-loader?this=>window'
+			/*强制使用CommonJS路径*/
+			// use: 'imports-loader?define=>false'
+			/*exports-loader,将全局变量导出为CommonJS格式*/
+			use: 'exports-loader?file,parse=helpers.parse'
+		}
+		],
+		/*shimming-noParse选项，若无AMD／CommonJS版本时，可将dist版本
+		标记为noParse，webpack将直接引入该模块且不会解析它*/
+		noParse:/jquery|backbone/
 	}
 };
