@@ -9,8 +9,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-	/*单入口*/
-	 // entry: './src/index.js',
+	/*单入口,library*/
+	 entry: './src/index.js',
 	/*多入口*/
 	 // entry:{
 	 // 	app: './src/index.js',
@@ -20,12 +20,12 @@ module.exports = {
 	 // },
 	 /*提取模版，第三方库，因第三方库很少像本地源代码频繁修改，减少向
 	 服务器获取资源*/
-	entry: {
-		main: './src/index.js',
-		vendor: [
-		  'lodash'
-		]
-	},
+	 // entry: {
+	 // 	main: './src/index.js',
+	 // 	vendor: [
+	 // 	  'lodash'
+	 // 	]
+	 // },
 	/*开放环境，查找错误等*/
 	devtool: 'inline-source-map',
 	/*自动编译*/
@@ -54,15 +54,24 @@ module.exports = {
 		/*提取模版-第三方库,vendor必须在runtime前，否则编译失败,
 		但因为模块标识符的存在，导致第三方库hash值发生变化，
 		所以，使用hashedModuleIdsPlugin插件保证vendor不变化*/
-		new webpack.HashedModuleIdsPlugin(),
-		new webpack.optimize.CommonsChunkPlugin({
-			name: 'vendor'
-		}),
+		 // new webpack.HashedModuleIdsPlugin(),
+		 // new webpack.optimize.CommonsChunkPlugin({
+		 // 	name: 'vendor'
+		 // }),
 		/*提取模版*/
-		new webpack.optimize.CommonsChunkPlugin({
-			name: 'runtime'
-		})
+		 // new webpack.optimize.CommonsChunkPlugin({
+		 // 	name: 'runtime'
+		 // })
 	],
+	/*library-若不配置externals的话，会将其他模块一起打包进library中*/
+	externals: {
+		"lodash":{
+			commonjs: 'lodash',
+			commonjs2: 'lodash',
+			amd: 'lodash',
+			root: "_"
+		}
+	},
 	/*输出文件目录等*/
 	output: {
 		/*单入口输出*/
@@ -72,7 +81,11 @@ module.exports = {
 		/*代码分离-动态导入,编译后，动态导入的模块会单独存入一个js文件*/
 		 // chunkFilename: '[name].bundle.js',
 		/*缓存,若文件文件未更改，则文件名中的hash值不变，若变化，则hash值变更*/
-		filename: '[name].[hash].js',
+		 // filename: '[name].[hash].js',
+		/*library*/
+		filename: 'webpack-numbers.js',
+		library:'webpackNumbers',
+		libraryTarget:'umd',
 		path: path.resolve(__dirname, 'dist')
 	},
 	/*css、图片、字体、csv、tsv、xml等资源加载*/
