@@ -69,6 +69,10 @@ module.exports = {
 		// 	/*从tslib包中导入函数__assign*/
 		// 	__assign: ['tslib', '__assign']
 		// })
+		/*使用环境变量，消除开放和生产构建间的差异*/
+		new webpack.optimize.UglifyJsPlugin({
+			compress: process.env.NODE_ENV === 'production'
+		})
 	],
 	/*library-若不配置externals的话，会将其他模块一起打包进library中*/
 	// externals: {
